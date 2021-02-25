@@ -16,10 +16,10 @@ class Light:
 
             light.self.is_open[time] = False
 
- class Junction:
+class Junction:
     def __init__(self, simulation_length, junction_id, connected_streets):
         self.junction_id = junction_id
-        self.all_light = []
+        self.all_lights = []
 
         for street in connected_streets:
-            self.all_light.append(Light(simulation_length, street, junction_id))
+            self.all_lights.append(Light(simulation_length, street, junction_id))
