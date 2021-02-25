@@ -1,13 +1,3 @@
-from collections import defaultdict
-
-all_lights = {}
-
-destination_junctions = defaultdict(list)
-
-def add_street(self, street_name, start_id, end_id):
-    destination_junctions[start_id].append((street_name, end_id))
-
-
 class Light:
     def __init__(self, simulation_length, street, light_junction, destination_junction):
         self.street = street
@@ -15,7 +5,6 @@ class Light:
         self.destination_junction = destination_junction
         self.is_open = [None] * simulation_length
         self.open_used = [False] * simulation_length
-
 
     def set_open(self, time):
         assert self.is_open[time] is None
@@ -29,12 +18,12 @@ class Light:
 
 
 class Junction:
-    def __init__(self, simulation_length, junction_id):
+    def __init__(self, destination_junctions, all_lights, simulation_length, junction_id):
         self.junction_id = junction_id
         self.all_lights = []
 
         connected_streets = destination_junctions[junction_id]
-        
+
         for street, end_id in connected_streets:
             light = Light(simulation_length, street, junction_id, end_id)
             all_lights[street] = light
@@ -42,7 +31,7 @@ class Junction:
 
 
 class Car:
-    def __init__(self, route:str):
+    def __init__(self, route: str):
         self.route = []
 
         # Get street classes

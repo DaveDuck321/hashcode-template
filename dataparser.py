@@ -2,6 +2,8 @@ import argparse
 import json
 from collections import *
 from pathlib import Path
+from Structure import *
+from collections import defaultdict
 
 
 def ni(itr):
@@ -41,6 +43,18 @@ def parse(inp):
     for _ in range(ns.V):
         line = next(itr).split(' ')
         ns.paths.append(line[1:])
+
+    # Make Tom happy
+    ns.all_lights = {}
+    ns.destination_junctions = defaultdict(list)
+
+    # Junctions
+    for street in ns.streets:
+        ns.destination_junctions[street.start_junction].append((street.name, street.end_junction))
+
+    ns.junctions = []
+    for i in ns.I:
+        ns.junctions.append(Junction(ns.destination_junctions, ns.all_lights, ns.D, i))
 
     return ns
 
