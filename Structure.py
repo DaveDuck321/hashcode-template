@@ -1,3 +1,5 @@
+all_lights = {}
+
 class Light:
     def __init__(self, simulation_length, street, junction):
         self.street = street
@@ -16,10 +18,23 @@ class Light:
 
             light.self.is_open[time] = False
 
+
 class Junction:
     def __init__(self, simulation_length, junction_id, connected_streets):
         self.junction_id = junction_id
         self.all_lights = []
 
         for street in connected_streets:
-            self.all_lights.append(Light(simulation_length, street, junction_id))
+            light = Light(simulation_length, street, junction_id)
+            all_lights[street] = light
+            self.all_lights.append(light)
+
+
+class Car:
+    def __init__(self, score, route:str):
+        self.score = score
+        self.route = []
+
+        # Get street classes
+        for street in route:
+            self.route.append(all_lights[street])
