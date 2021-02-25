@@ -30,7 +30,8 @@ def solve(inp, args):
             time += wait_time
             time += car.route[car_position].cost
 
-    to_output()
+    number_of_intersections = len(junctions)
+
     return '0'
 
 if __name__ == '__main__':

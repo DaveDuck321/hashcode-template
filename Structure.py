@@ -31,7 +31,6 @@ class Light:
         return -1
 
 
-
 class Junction:
     def __init__(self, destination_junctions, all_lights, simulation_length, junction_id):
         self.junction_id = junction_id
