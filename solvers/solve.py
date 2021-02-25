@@ -1,5 +1,5 @@
 from util import get_in_file_content
-from dataparser import parse
+from dataparser import parse, dump_to_output
 from collections import *
 import argparse
 import random
@@ -23,20 +23,18 @@ def solve(inp, args):
         car_position = 0
 
         while time < simulation_time:
-            wait_time = car.route[car_position].await_green()
+            wait_time = car.route[car_position].await_green(simulation_time, time)
             if wait_time == -1:
                 break
 
             car_position += 1
-            if car_position == len(car.route[car_position].route):
+            if car_position == len(car.route):
                 break
 
             time += wait_time
             time += car.route[car_position].cost
 
-    number_of_intersections = len(junctions)
-
-    return '0'
+    return dump_to_output('file_name.txt', junctions, simulation_time)
 
 
 if __name__ == '__main__':

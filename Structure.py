@@ -11,21 +11,23 @@ class Light:
         assert self.is_open[time] is None
 
         self.is_open[time] = True
-        for light in self.junction:
+        for light in self.light_junction.all_lights:
             if light.street == self.street:
                 continue
 
-            light.self.is_open[time] = False
+            light.is_open[time] = False
 
     def await_green(self, simulation_length, start_time):
-        for current_time in range(time, simulation_length):
+        for current_time in range(start_time, simulation_length):
             if self.is_open[current_time] is None:
                 self.set_open(current_time)
                 self.open_used[current_time] = True
+                self.light_junction.last_used = max(self.light_junction.last_used, current_time)
                 return current_time - start_time
 
             if self.is_open[current_time] and not self.open_used[current_time]:
                 self.open_used[current_time] = True
+                self.light_junction.last_used = max(self.light_junction.last_used, current_time)
                 return current_time - start_time
 
         return -1
@@ -35,11 +37,13 @@ class Junction:
     def __init__(self, destination_junctions, all_lights, simulation_length, junction_id):
         self.junction_id = junction_id
         self.all_lights = []
+        self.last_used = 0
 
         connected_streets = destination_junctions[junction_id]
 
-        for street, end_id in connected_streets:
-            light = Light(simulation_length, street, junction_id, end_id)
+        # simulation_length, street, cost, light_junction, destination_junction
+        for street, end_id, cost in connected_streets:
+            light = Light(simulation_length, street, cost, self, end_id)
             all_lights[street] = light
             self.all_lights.append(light)
 

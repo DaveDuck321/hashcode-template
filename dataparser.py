@@ -15,6 +15,48 @@ def nl(itr):
     return [int(v) for v in next(itr).split()]
 
 
+def dump_to_output(file_name, junctions, simulation_time):
+    junctions_timings = []  # junction_id, [(Street, time)]
+    for junction in junctions:
+        junction_id = junction.junction_id
+
+        current_on = -1
+        time_on = 0
+
+        timings = []  # (Street, time)
+        for time in range(junction.last_used):
+            now_on = -1
+            time_on += 1
+            for light in junction.all_lights:
+                if light.is_open[time]:
+                    now_on = light.street
+            
+            if now_on == -1:
+                continue  # Keep it on
+
+            if now_on == current_on:
+                continue
+
+            timings.append((now_on, time_on))
+            current_on = now_on
+            time_on = 0
+
+        if len(timings) != 0:
+            junctions_timings.append((junction_id, timings))
+
+    # Print to file
+    buffer = []
+    buffer.append(f"{len(junctions_timings)}")
+
+    for junction_id, lights in junctions_timings:
+        buffer.append(f"{junction_id}")
+        buffer.append(f"{len(lights)}")
+
+        for light in lights:
+            buffer.append(f"{light[0]} {light[1]}")
+
+    return '\n'.join(buffer)
+
 def parse(inp):
     itr = (line for line in inp.split('\n'))
     ns = argparse.Namespace()
@@ -50,7 +92,7 @@ def parse(inp):
 
     # Junctions
     for street in streets:
-        destination_junctions[street['start_junction']].append((street['name'], street['end_junction']))
+        destination_junctions[street['start_junction']].append((street['name'], street['end_junction'], street['length']))
 
     ns.junctions = []
     for i in range(ns.I):
