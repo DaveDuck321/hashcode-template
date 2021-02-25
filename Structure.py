@@ -31,7 +31,7 @@ class Junction:
 
 
 class Car:
-    def __init__(self, route: str):
+    def __init__(self, all_lights, route):
         self.route = []
 
         # Get street classes

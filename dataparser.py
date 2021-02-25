@@ -28,10 +28,10 @@ def parse(inp):
     assert 1 <= ns.F <= 10**3
 
     # The next S lines contain descriptions of streets
-    ns.streets = []
+    streets = []
     for _ in range(ns.S):
         line = next(itr).split(' ')
-        ns.streets.append({
+        streets.append({
             'start_junction': int(line[0]),
             'end_junction': int(line[1]),
             'name': line[2],
@@ -39,22 +39,25 @@ def parse(inp):
         })
 
     # The next V lines describe the paths of each car
-    ns.paths = []
+    paths = []
     for _ in range(ns.V):
         line = next(itr).split(' ')
-        ns.paths.append(line[1:])
+        paths.append(line[1:])
 
     # Make Tom happy
     ns.all_lights = {}
-    ns.destination_junctions = defaultdict(list)
+    destination_junctions = defaultdict(list)
 
     # Junctions
-    for street in ns.streets:
-        ns.destination_junctions[street.start_junction].append((street.name, street.end_junction))
+    for street in streets:
+        destination_junctions[street['start_junction']].append((street['name'], street['end_junction']))
 
     ns.junctions = []
-    for i in ns.I:
-        ns.junctions.append(Junction(ns.destination_junctions, ns.all_lights, ns.D, i))
+    for i in range(ns.I):
+        ns.junctions.append(Junction(destination_junctions, ns.all_lights, ns.D, i))
+
+    # Routes -> Cars
+    ns.cars = list(map(lambda path: Car(ns.all_lights, path), paths))
 
     return ns
 
@@ -63,6 +66,12 @@ class FlexibleEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, argparse.Namespace):
             return vars(obj)
+        if isinstance(obj, Light):
+            return obj.__dict__
+        if isinstance(obj, Junction):
+            return obj.__dict__
+        if isinstance(obj, Car):
+            return obj.__dict__
         return json.JSONEncoder.default(self, obj)
 
 
