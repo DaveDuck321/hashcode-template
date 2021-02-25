@@ -37,6 +37,13 @@ def dump_to_output(file_name, junctions, simulation_time):
             if now_on == current_on:
                 continue
 
+            is_break = False
+            for street, _ in timings:
+                if street == now_on:
+                    is_break = True
+            if is_break:
+                continue
+
             timings.append((now_on, time_on))
             current_on = now_on
             time_on = 0
@@ -92,7 +99,7 @@ def parse(inp):
 
     # Junctions
     for street in streets:
-        destination_junctions[street['start_junction']].append((street['name'], street['end_junction'], street['length']))
+        destination_junctions[street['end_junction']].append((street['name'], street['start_junction'], street['length']))
 
     ns.junctions = []
     for i in range(ns.I):

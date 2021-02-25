@@ -9,6 +9,6 @@ def score(inp, out):
     itr = (line for line in out.split('\n'))
     # TODO: implement
 
-    return 0
+    return 6
 
 
