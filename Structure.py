@@ -1,6 +1,7 @@
 class Light:
-    def __init__(self, simulation_length, street, light_junction, destination_junction):
+    def __init__(self, simulation_length, street, cost, light_junction, destination_junction):
         self.street = street
+        self.cost = cost
         self.light_junction = light_junction
         self.destination_junction = destination_junction
         self.is_open = [None] * simulation_length
@@ -15,6 +16,20 @@ class Light:
                 continue
 
             light.self.is_open[time] = False
+
+    def await_green(self, simulation_length, start_time):
+        for current_time in range(time, simulation_length):
+            if self.is_open[current_time] is None:
+                self.set_open(current_time)
+                self.open_used[current_time] = True
+                return current_time - start_time
+
+            if self.is_open[current_time] and not self.open_used[current_time]:
+                self.open_used[current_time] = True
+                return current_time - start_time
+
+        return -1
+
 
 
 class Junction:
@@ -33,7 +48,10 @@ class Junction:
 class Car:
     def __init__(self, all_lights, route):
         self.route = []
+        self.route_cost = 0
 
         # Get street classes
         for street in route:
-            self.route.append(all_lights[street])
+            light = all_lights[street]
+            self.route.append(light)
+            self.route_cost += light.cost
