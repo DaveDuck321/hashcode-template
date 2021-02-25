@@ -3,26 +3,54 @@ import json
 from collections import *
 from pathlib import Path
 
+
 def ni(itr):
     return int(next(itr))
 
-# parses the next string of itr as a list of integers
+
 def nl(itr):
+    # parses the next string of itr as a list of integers
     return [int(v) for v in next(itr).split()]
 
 
 def parse(inp):
     itr = (line for line in inp.split('\n'))
     ns = argparse.Namespace()
-    # TODO: fill ns
+
+    # Parse first line
+    ns.D, ns.I, ns.S, ns.V, ns.F = nl(itr)
+    assert 1 <= ns.D <= 10**4
+    assert 2 <= ns.I <= 10**5
+    assert 2 <= ns.S <= 10**5
+    assert 1 <= ns.V <= 10**3
+    assert 1 <= ns.F <= 10**3
+
+    # The next S lines contain descriptions of streets
+    ns.streets = []
+    for _ in range(ns.S):
+        line = next(itr).split(' ')
+        ns.streets.append({
+            'start_junction': int(line[0]),
+            'end_junction': int(line[1]),
+            'name': line[2],
+            'length': int(line[3])
+        })
+
+    # The next V lines describe the paths of each car
+    ns.paths = []
+    for _ in range(ns.V):
+        line = next(itr).split(' ')
+        ns.paths.append(line[1:])
 
     return ns
+
 
 class FlexibleEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, argparse.Namespace):
             return vars(obj)
         return json.JSONEncoder.default(self, obj)
+
 
 def parse2json(inp):
     ns = parse(inp)
