@@ -1,17 +1,21 @@
+from util import get_in_file_content
+from dataparser import parse
+from collections import *
 import argparse
 import random
 import sys
 sys.path.extend(['..', '.'])
-from collections import *
-from dataparser import parse
-from util import get_in_file_content
 
-# inp is an input file as a single string
-# return your output as a string
+
 def solve(inp, args):
-    # TODO: Solve the problem
+    # inp is an input file as a single string
+    # return your output as a string
     random.seed(args['seed'])
-    car_routes, junctions, simulation_time = parse(inp)
+
+    ns = parse(inp)
+    car_routes = ns.cars
+    junctions = ns.junctions
+    simulation_time = ns.D
 
     #car_order = sorted(car_routes, key=lambda route: route.route_cost)
     for car in car_routes:
@@ -33,6 +37,7 @@ def solve(inp, args):
     number_of_intersections = len(junctions)
 
     return '0'
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
